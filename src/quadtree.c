@@ -240,8 +240,24 @@ int qtInsert(QuadNode *node, const Boid flock[], int id)
  * --------------------------------------------------------------------- */
 void qtQuery(const QuadNode *node, const Boid flock[], Box square, DynamicArray *found)
 {
-    /* TODO: write this function (see the comment above). */
-    (void)node; (void)flock; (void)square; (void)found;
+    //first check
+    if(node==NULL) return;
+    if(!boxesOverlap(node->box,square)) return;
+    // leafse çocuklara da bak
+    if(isLeaf(node)){
+        for(int i=0;i<node->boids.size;i++){
+            int id= node->boids.data[i];
+            if(squareContainsPoint(square,flock[id].x,flock[id].y)){
+                append(found,id);
+            }
+        }
+    }
+    // leaf değilse diye çocukları recursive çağırdık
+    else {
+        for(int i=0;i<4;i++){
+            qtQuery(node->child[i],flock,square,found);
+        }
+    }
 }
 
 /* ---------------------------------------------------------------------
